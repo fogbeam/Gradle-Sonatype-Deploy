@@ -1,0 +1,15 @@
+version = '0.0.1'
+
+apply plugin:'java'
+apply plugin:'groovy'
+apply plugin:'maven'
+
+repositories {
+  mavenCentral()
+}
+dependencies {
+  compile gradleApi()
+  compile 'com.google.guava:guava:13.0'
+  groovy localGroovy()
+}
+
