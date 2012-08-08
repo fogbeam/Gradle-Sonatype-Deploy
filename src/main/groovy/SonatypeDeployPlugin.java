@@ -2,6 +2,7 @@ package org.fogbeam.gradle.sonatype;
 
 import org.gradle.api.*;
 import com.google.common.collect.ImmutableMap;
+import static org.fogbeam.gradle.sonatype.SonatypeDeployPluginHelper;
 
 public class SonatypeDeployPlugin implements Plugin<Project> {
 
@@ -10,6 +11,7 @@ public class SonatypeDeployPlugin implements Plugin<Project> {
     target.apply(ImmutableMap.of("apply", "maven"));
     target.apply(ImmutableMap.of("apply", "signing"));
     target.getArtifacts().add("archives", "jar");
+    configureSigning(target);
   }
 
 
