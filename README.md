@@ -1,4 +1,7 @@
-Gradle-Sonatype-Deploy
-======================
+Gradle Sonatype Deploy Plugin
+==============================
 
-Plugin for deploying to Sonatype
+This plugin automates the configuration of your project to use 
+[Sonatype's Repositories](https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide), which
+are a gateway for open source projects into Maven Central.
+
