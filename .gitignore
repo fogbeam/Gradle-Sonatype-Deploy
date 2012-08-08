@@ -4,3 +4,10 @@
 *.jar
 *.war
 *.ear
+
+# Gradle directories
+.gradle
+build
+
+# vi swap files
+.*.swp
