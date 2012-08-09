@@ -6,10 +6,18 @@ apply plugin:'maven'
 
 repositories {
   mavenCentral()
+  def gradleHome = gradle.gradleHomeDir
+  def gradleLib = new File(gradleHome, 'lib')
+  def gradlePlugins = new File(gradleLib, 'plugins')
+  flatDir name:'GRADLE_HOME/lib', dirs: gradleLib
+  flatDir name:'GRADLE_HOME/lib/plugins', dirs: gradlePlugins
 }
 dependencies {
   compile gradleApi()
+  compile ':pmaven-common:0.8-20100325'
   compile 'com.google.guava:guava:13.0'
+  compile 'commons-lang:commons-lang:2.4'
+  compile 'org.apache.maven:maven-model:3.0.4'
   groovy localGroovy()
 }
 
