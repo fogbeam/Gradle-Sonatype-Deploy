@@ -22,6 +22,8 @@ public class SonatypeDeployPlugin implements Plugin<Project> {
 
   public void apply(Project target) {
     // TODO Add a plugin to generate a javadoc and a source jar.
+    target.getLogger().info(getClass().getSimpleName() + " is applying itself to " + target);
+/*
     target.apply(ImmutableMap.of("apply", "maven"));
     target.apply(ImmutableMap.of("apply", "signing"));
     target.getArtifacts().add("archives", "jar");
@@ -30,6 +32,7 @@ public class SonatypeDeployPlugin implements Plugin<Project> {
     addPomConfigurationHook(target);
     configurePomToSetPackagingString(findMavenDeployer(target).getPom());
     target.getExtensions().create(EXTENSION_NAME, SonatypeConfiguration.class);
+*/
   }
 
   private static MavenDeployer findMavenDeployer(Project p) {
