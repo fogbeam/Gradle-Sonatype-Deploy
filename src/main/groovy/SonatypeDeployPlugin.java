@@ -23,6 +23,7 @@ public class SonatypeDeployPlugin implements Plugin<Project> {
   public void apply(Project target) {
     // TODO Add a plugin to generate a javadoc and a source jar.
     target.getLogger().info(getClass().getSimpleName() + " is applying itself to " + target);
+    target.apply(ImmutableMap.of("plugin", "java"));
     target.apply(ImmutableMap.of("plugin", "maven"));
     target.apply(ImmutableMap.of("plugin", "signing"));
     target.getArtifacts().add("archives", target.getTasks().getByName("jar"));
