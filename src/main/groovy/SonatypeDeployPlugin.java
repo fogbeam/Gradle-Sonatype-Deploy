@@ -28,7 +28,7 @@ public class SonatypeDeployPlugin implements Plugin<Project> {
     target.apply(ImmutableMap.of("plugin", "signing"));
     target.getArtifacts().add("archives", target.getTasks().getByName("jar"));
     configureSigning(target);
-    configureDeployer(findMavenDeployer(target), findSigner(target));
+    configureDeployer(target, findMavenDeployer(target), findSigner(target));
     addPomConfigurationHook(target);
     configurePomToSetPackagingString(findMavenDeployer(target).getPom());
     target.getExtensions().create(EXTENSION_NAME, SonatypeConfiguration.class);
@@ -42,13 +42,13 @@ public class SonatypeDeployPlugin implements Plugin<Project> {
     return p.getExtensions().findByType(SigningExtension.class);
   }
 
-  private static void configureDeployer(final MavenDeployer mvn, final SigningExtension sign) {
+  private static void configureDeployer(final Project project, final MavenDeployer mvn, final SigningExtension sign) {
     mvn.beforeDeployment(new Action<MavenDeployment>() {
       public void execute(MavenDeployment deploy) {
         sign.signPom(deploy);
       }
     });
-    configureRepository(mvn);
+    configureRepository(project, mvn);
   }
 
   private static Object die(String msg) {

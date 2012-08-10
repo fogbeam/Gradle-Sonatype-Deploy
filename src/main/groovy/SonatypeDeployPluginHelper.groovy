@@ -71,7 +71,7 @@ class SonatypeDeployPluginHelper {
     }
   }
 
-  static void configureRepository(MavenDeployer mvn) {
+  static void configureRepository(Project project, MavenDeployer mvn) {
     mvn.repository(url:"https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
       authentication(userName: project.sonatypeUsername, password: project.sonatypePassword)
     }
