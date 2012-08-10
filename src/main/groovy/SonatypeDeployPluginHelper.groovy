@@ -73,7 +73,18 @@ class SonatypeDeployPluginHelper {
 
   static void configureRepository(Project project, MavenDeployer mvn) {
     mvn.repository(url:"https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-      authentication(userName: project.sonatypeUsername, password: project.sonatypePassword)
+      try {
+        authentication(userName: project.sonatypeUsername, password: project.sonatypePassword)
+      } catch(MissingPropertyException mpe) {
+        if(mpe.property.startsWith("sonatype")) {
+          throw new GradleScriptException(
+            "Edit your ${new File(project.gradle.gradleUserHomeDir, 'gradle.properties')} to include ${mpe.property}",
+            mpe
+          )
+        } else {
+          throw mpe;
+        }
+      }
     }
   }
 
