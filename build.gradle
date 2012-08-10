@@ -7,11 +7,6 @@ buildscript {
   repositories {
     mavenLocal()
     mavenCentral()
-    def gradleHome = gradle.gradleHomeDir
-    def gradleLib = new File(gradleHome, 'lib')
-    def gradlePlugins = new File(gradleLib, 'plugins')
-    flatDir name:'GRADLE_HOME/lib', dirs: gradleLib
-    flatDir name:'GRADLE_HOME/lib/plugins', dirs: gradlePlugins
   }
   dependencies {
     classpath 'org.fogbeam.gradle.sonatype:sonatype-deploy-bootstrap:0.0.1'
@@ -32,7 +27,6 @@ dependencies {
   compile gradleApi()
   compile 'com.google.guava:guava:13.0'
   compile 'commons-lang:commons-lang:2.4'
-  compile 'org.sonatype.pmaven:pmaven-common:0.8-20100325'
   groovy localGroovy()
 }
 
