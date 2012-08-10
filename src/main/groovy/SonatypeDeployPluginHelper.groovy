@@ -9,10 +9,14 @@ import static org.apache.commons.lang.StringUtils.getLevenshteinDistance;
 
 class SonatypeDeployPluginHelper {
 
-  static MavenDeployer createMavenDeployer(RepositoryHandler repHand) {
+  static MavenDeployer createMavenDeployer(Project p) {
     def x = null
-    repHand {
-      x = mavenDeployer {}
+    p.uploadArchives {
+      repositories {
+        x = mavenDeployer {
+
+        }
+      }
     }
     return x
   }
