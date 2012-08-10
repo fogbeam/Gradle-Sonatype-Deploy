@@ -25,7 +25,7 @@ public class SonatypeDeployPlugin implements Plugin<Project> {
     target.getLogger().info(getClass().getSimpleName() + " is applying itself to " + target);
     target.apply(ImmutableMap.of("plugin", "maven"));
     target.apply(ImmutableMap.of("plugin", "signing"));
-    target.getArtifacts().add("archives", "jar");
+    target.getArtifacts().add("archives", target.getTasks().getByName("jar"));
     configureSigning(target);
     configureDeployer(findMavenDeployer(target), findSigner(target));
     addPomConfigurationHook(target);
