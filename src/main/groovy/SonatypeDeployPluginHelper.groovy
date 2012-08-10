@@ -1,12 +1,21 @@
 package org.fogbeam.gradle.sonatype
 
 import org.gradle.api.*;
-import org.gradle.api.artifacts.maven.MavenDeployer;
+import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.gradle.api.artifacts.maven.MavenDeployer
 import org.gradle.api.artifacts.maven.MavenPom;
 import org.gradle.api.logging.Logging;
 import static org.apache.commons.lang.StringUtils.getLevenshteinDistance;
 
 class SonatypeDeployPluginHelper {
+
+  static MavenDeployer createMavenDeployer(RepositoryHandler repHand) {
+    def x = null
+    repHand {
+      x = mavenDeployer {}
+    }
+    return x
+  }
 
   static Closure oneArgNopClosure() { return {-> } }
 

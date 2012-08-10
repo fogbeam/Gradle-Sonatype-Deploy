@@ -36,7 +36,7 @@ public class SonatypeDeployPlugin implements Plugin<Project> {
 
   private static MavenDeployer findMavenDeployer(Project p) {
     Upload uploadArchives = (Upload)p.getTasks().getByName("uploadArchives");
-    return (MavenDeployer)uploadArchives.getRepositories().getByName("mavenDeployer");
+    return createMavenDeployer(uploadArchives.getRepositories());
   }
 
   private static SigningExtension findSigner(Project p) {
