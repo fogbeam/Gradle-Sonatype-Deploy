@@ -1,7 +1,7 @@
-apply plugin:'java'
-apply plugin:'groovy'
-apply plugin:'maven'
-apply plugin:'sonatype-deploy'
+apply(plugin:'java')
+apply(plugin:'groovy')
+apply(plugin:'maven')
+apply(plugin:'sonatype-deploy-bootstrap')
 
 buildscript {
   repositories {
@@ -14,7 +14,7 @@ buildscript {
     flatDir name:'GRADLE_HOME/lib/plugins', dirs: gradlePlugins
   }
   dependencies {
-    classpath 'org.fogbeam.gradle.sonatype:sonatype-deploy-bootstrap:0.0.0'
+    classpath 'org.fogbeam.gradle.sonatype:sonatype-deploy-bootstrap:0.0.1'
   }
 }
 
@@ -34,5 +34,4 @@ dependencies {
   compile 'org.sonatype.pmaven:pmaven-common:0.8-20100325'
   groovy localGroovy()
 }
-
 
