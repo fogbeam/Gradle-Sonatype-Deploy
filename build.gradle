@@ -1,10 +1,25 @@
-version = '0.0.1'
-
 apply plugin:'java'
 apply plugin:'groovy'
 apply plugin:'maven'
+apply plugin:'sonatype-deploy'
+
+buildscript {
+  repositories {
+    mavenLocal()
+    mavenCentral()
+    def gradleHome = gradle.gradleHomeDir
+    def gradleLib = new File(gradleHome, 'lib')
+    def gradlePlugins = new File(gradleLib, 'plugins')
+    flatDir name:'GRADLE_HOME/lib', dirs: gradleLib
+    flatDir name:'GRADLE_HOME/lib/plugins', dirs: gradlePlugins
+  }
+  dependencies {
+    classpath 'org.fogbeam.gradle.sonatype:sonatype-deploy-bootstrap:0.0.0'
+  }
+}
 
 repositories {
+  mavenLocal()
   mavenCentral()
   def gradleHome = gradle.gradleHomeDir
   def gradleLib = new File(gradleHome, 'lib')
@@ -19,4 +34,5 @@ dependencies {
   compile 'org.sonatype.pmaven:pmaven-common:0.8-20100325'
   groovy localGroovy()
 }
+
 
