@@ -76,9 +76,10 @@ class SonatypeDeployPluginHelper {
       try {
         authentication(userName: project.sonatypeUsername, password: project.sonatypePassword)
       } catch(MissingPropertyException mpe) {
-        if(mpe.property.startsWith("sonatype")) {
+        if(mpe.property?.startsWith("sonatype") || mpe.message?.contains("sonatype")) {
           throw new GradleScriptException(
-            "Edit your ${new File(project.gradle.gradleUserHomeDir, 'gradle.properties')} to include ${mpe.property}",
+            "Edit your ${new File(project.gradle.gradleUserHomeDir, 'gradle.properties')} to include " +
+            (mpe.property ?: "sonatypeUsername and sonatypePassword"),
             mpe
           )
         } else {
