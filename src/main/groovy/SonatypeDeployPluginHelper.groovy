@@ -6,6 +6,12 @@ import org.gradle.api.artifacts.maven.MavenDeployer
 import org.gradle.api.artifacts.maven.MavenPom;
 import org.gradle.api.logging.Logging;
 import static org.apache.commons.lang.StringUtils.getLevenshteinDistance;
+import static org.fogbeam.gradle.sonatype.SonatypeDeployPlugin.die
+import static org.fogbeam.gradle.sonatype.SonatypeDeployPlugin.createScm
+import static org.fogbeam.gradle.sonatype.SonatypeDeployPlugin.createLicenses
+import static org.fogbeam.gradle.sonatype.SonatypeDeployPlugin.createDevelopers
+import static org.fogbeam.gradle.sonatype.SonatypeDeployPlugin.findMavenDeployer
+import static org.fogbeam.gradle.sonatype.SonatypeDeployPlugin.EXTENSION_NAME
 
 class SonatypeDeployPluginHelper {
 
@@ -102,6 +108,24 @@ class SonatypeDeployPluginHelper {
       printer.print(pomXml)
       xml.setLength(0)
       xml.append(newXml.toString())
+    }
+  }
+
+  static void configureModel(Project p, data) {
+    p.gradle.taskGraph.whenReady { graph ->
+      if(graph.hasTask("uploadArchives")) {
+        findMavenDeployer(p).pom.model.with {
+          name = name ?: data.name ?: p.name
+          packaging = "jar"
+          description = description ?: data.description ?:
+            "${name}, deployed by Gradle Sonatype Deploy Plugin by Fogbeam Labs"
+          url = url ?: data.url ?:
+            die("The URL for your project needs to be set on project." + EXTENSION_NAME + ".url")
+          scm = scm ?: createScm(data)
+          licenses = licenses ?: createLicenses(p, data)
+          developers = developers ?: createDevelopers(p, data)
+        }
+      }
     }
   }
 
