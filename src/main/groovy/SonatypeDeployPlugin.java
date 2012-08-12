@@ -28,28 +28,27 @@ public class SonatypeDeployPlugin implements Plugin<Project> {
     target.apply(ImmutableMap.of("plugin", "signing"));
     target.getArtifacts().add("archives", target.getTasks().getByName("jar"));
     configureSigning(target);
-    configureDeployer(findMavenDeployer(target), findSigner(target));
+    configureDeployer(target, findMavenDeployer(target), findSigner(target));
     addPomConfigurationHook(target);
     configurePomToSetPackagingString(findMavenDeployer(target).getPom());
     target.getExtensions().create(EXTENSION_NAME, SonatypeConfiguration.class);
   }
 
   private static MavenDeployer findMavenDeployer(Project p) {
-    Upload uploadArchives = (Upload)p.getTasks().getByName("uploadArchives");
-    return createMavenDeployer(uploadArchives.getRepositories());
+    return createMavenDeployer(p);
   }
 
   private static SigningExtension findSigner(Project p) {
     return p.getExtensions().findByType(SigningExtension.class);
   }
 
-  private static void configureDeployer(final MavenDeployer mvn, final SigningExtension sign) {
+  private static void configureDeployer(final Project project, final MavenDeployer mvn, final SigningExtension sign) {
     mvn.beforeDeployment(new Action<MavenDeployment>() {
       public void execute(MavenDeployment deploy) {
         sign.signPom(deploy);
       }
     });
-    configureRepository(mvn);
+    configureRepository(project, mvn);
   }
 
   private static Object die(String msg) {
@@ -59,26 +58,7 @@ public class SonatypeDeployPlugin implements Plugin<Project> {
   private static void addPomConfigurationHook(Project project) {
     project.afterEvaluate(new Action<Project>() {
       public void execute(Project p) {
-        SonatypeConfiguration data = p.getExtensions().findByType(SonatypeConfiguration.class);
-        Model model = (Model)findMavenDeployer(p).getPom().getModel();
-
-        if(model.getName() == null) model.setName(data.name == null ? p.getName() : data.name);
-        model.setPackaging("jar");
-        if(model.getDescription() == null) model.setDescription(data.description == null ?
-          (model.getName()  + ", deployed by the Gradle Sonatype Deploy Plugin by Fogbeam Labs")
-          : data.description
-        );
-        if(model.getUrl() == null) model.setUrl(data.url == null ?
-          die("The URL for your project needs to be set on project." + EXTENSION_NAME + ".url").toString()
-          : data.url
-        );
-        if(model.getScm() == null) model.setScm(createScm(data));
-        if(model.getLicenses() == null || model.getLicenses().isEmpty()) {
-          model.setLicenses(createLicenses(p, data));
-        }
-        if(model.getDevelopers() == null || model.getDevelopers().isEmpty()) {
-          model.setDevelopers(createDevelopers(p, data));
-        }
+        configureModel(p, p.getExtensions().findByType(SonatypeConfiguration.class));
       }
     });
   }

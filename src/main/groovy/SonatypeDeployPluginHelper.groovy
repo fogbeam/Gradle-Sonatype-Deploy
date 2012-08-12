@@ -9,10 +9,14 @@ import static org.apache.commons.lang.StringUtils.getLevenshteinDistance;
 
 class SonatypeDeployPluginHelper {
 
-  static MavenDeployer createMavenDeployer(RepositoryHandler repHand) {
+  static MavenDeployer createMavenDeployer(Project p) {
     def x = null
-    repHand {
-      x = mavenDeployer {}
+    p.uploadArchives {
+      repositories {
+        x = mavenDeployer {
+
+        }
+      }
     }
     return x
   }
@@ -67,14 +71,15 @@ class SonatypeDeployPluginHelper {
     }
   }
 
-  static void configureRepository(MavenDeployer mvn) {
+  static void configureRepository(Project project, MavenDeployer mvn) {
     mvn.repository(url:"https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
       try {
         authentication(userName: project.sonatypeUsername, password: project.sonatypePassword)
       } catch(MissingPropertyException mpe) {
-        if(mpe.property.startsWith("sonatype")) {
+        if(mpe.property?.startsWith("sonatype") || mpe.message?.contains("sonatype")) {
           throw new GradleScriptException(
-            "Edit your ${new File(project.gradle.gradleUserHomeDir, 'gradle.properties')} to include ${mpe.property}",
+            "Edit your ${new File(project.gradle.gradleUserHomeDir, 'gradle.properties')} to include " +
+            (mpe.property ?: "sonatypeUsername and sonatypePassword"),
             mpe
           )
         } else {
@@ -97,6 +102,24 @@ class SonatypeDeployPluginHelper {
       printer.print(pomXml)
       xml.setLength(0)
       xml.append(newXml.toString())
+    }
+  }
+
+  static void configureModel(Project p, data) {
+    p.gradle.taskGraph.whenReady { graph ->
+      if(graph.hasTask("uploadArchives")) {
+        findMavenDeployer(p).pom.model.with {
+          name = name ?: data.name ?: p.name
+          packaging = "jar"
+          description = description ?: data.description ?:
+            "${name}, deployed by Gradle Sonatype Deploy Plugin by Fogbeam Labs"
+          url = url ?: data.url ?:
+            die("The URL for your project needs to be set on project." + EXTENSION_NAME + ".url")
+          scm = scm ?: createScm(data)
+          licenses = licenses ?: createLicenses(p, data)
+          developers = developers ?: createDevelopers(p, data)
+        }
+      }
     }
   }
 
